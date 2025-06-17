@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/pedidosFragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFCFC">
+
+    <ImageView
+        android:id="@+id/bg_orange_down"
+        android:layout_width="match_parent"
+        android:layout_height="550dp"
+        android:layout_gravity="bottom"
+        android:scaleType="centerCrop"
+        android:contentDescription="@string/bg_orange_cresc"
+        android:src="@drawable/bg_orange_down" />
+
+    <!-- Scroll completo -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Logo e Título -->
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="120dp"
+                    android:layout_height="80dp"
+                    android:src="@drawable/logo_eta"
+                    android:contentDescription="@string/logo_desc" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="130dp"
+                    android:text="Pedidos"
+                    android:textColor="#424242"
+                    android:textSize="28sp"
+                    android:textStyle="bold"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignTop="@id/logo"/>
+            </LinearLayout>
+
+            <!-- Barra de Busca -->
+            <EditText
+                android:id="@+id/searchBar"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_marginTop="10dp"
+                android:drawableStart="@android:drawable/ic_menu_search"
+                android:hint="Buscar pedido..."
+                android:padding="12dp"
+                android:background="@android:drawable/edit_text" />
+
+            <!-- Informações do Cliente -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:text="Informações do Cliente"
+                android:textSize="25sp"
+                android:textStyle="bold" />
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Nome do Cliente"
+                android:inputType="textPersonName"
+                android:layout_marginTop="0dp" />
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Telefone (opcional)"
+                android:inputType="phone"
+                android:layout_marginTop="0dp" />
+
+            <!-- Itens do Pedido -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@color/orange"
+                android:padding="10dp"
+                android:layout_marginTop="0dp">
+                <TextView
+                    android:id="@+id/tvItensPedido"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Itens do Pedido"
+                    android:textStyle="bold"
+                    android:textSize="25sp"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="4dp" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerViewProdutos"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    android:layout_marginBottom="16dp"
+                    />
+                <Button
+                    android:id="@+id/bttnAdd"
+                    android:layout_width="110dp"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="250dp"
+                    android:text="Adicionar"
+                    android:backgroundTint="@color/black"
+                    android:layout_marginTop="4dp"/>
+
+            </LinearLayout>
+
+            <!-- Total -->
+            <TextView
+                android:id="@+id/tvTotalPedido"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Total: R$ 0,00"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="16dp"/>
+
+            <!-- Observações -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Observações"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                android:layout_marginTop="16dp" />
+
+            <EditText
+                android:id="@+id/tvObservacao"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Digite aqui..."
+                android:minLines="2"
+                android:gravity="top"
+                android:background="@android:drawable/edit_text"
+                android:layout_marginTop="4dp" />
+
+            <!-- Botão Salvar -->
+            <Button
+                android:id="@+id/btnSalvarPedido"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Salvar Pedido"
+                android:layout_marginTop="2dp"
+                android:backgroundTint="#FF9800"
+                android:textColor="#FFF" />
+
+            <!-- Espaço final para não cortar conteúdo atrás da bottom bar -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="120dp" />
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Bottom Bar Fixa -->
+    <ImageView
+        android:id="@+id/bottomNavBar"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_gravity="bottom"
+        android:src="@drawable/bottombar"
+        android:scaleType="fitXY"
+        android:contentDescription="Bottom Navigation" />
+</FrameLayout>

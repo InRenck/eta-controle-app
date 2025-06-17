@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    card_view:cardCornerRadius="12dp"
+    card_view:cardElevation="4dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/tvVendaId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ID: 0000"
+            android:textStyle="bold"
+            android:textColor="#000000" />
+
+        <TextView
+            android:id="@+id/tvVendaCliente"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cliente: João Silva" />
+
+        <TextView
+            android:id="@+id/tvVendaData"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Data: 12/06/2025" />
+
+        <TextView
+            android:id="@+id/tvVendaHora"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hora: 14:30" />
+
+        <TextView
+            android:id="@+id/tvVendaPreco"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Total: R$250,00"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvVendaStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Status: Concluída"
+            android:textColor="#388E3C"
+            android:textStyle="italic" />
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

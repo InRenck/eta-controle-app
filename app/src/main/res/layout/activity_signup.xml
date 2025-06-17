@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="#FFFCFC">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="24dp">
+
+        <!-- Orange Top Wave -->
+        <ImageView
+            android:id="@+id/imageWave"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:src="@drawable/bg_orange"
+            android:scaleType="fitXY" />
+
+        <!-- Title -->
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_below="@id/imageWave"
+            android:layout_marginTop="0dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Criar Conta"
+            android:textColor="#424242"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+
+        <!-- Email Label -->
+        <TextView
+            android:id="@+id/tvEmail"
+            android:layout_below="@id/tvTitle"
+            android:layout_marginTop="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Email"
+            android:textColor="#616161"
+            android:textSize="16sp" />
+
+        <!-- Email Input -->
+        <EditText
+            android:id="@+id/editEmail"
+            android:layout_below="@id/tvEmail"
+            android:layout_marginTop="0dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="demo@email.com"
+            android:inputType="textEmailAddress"
+            android:backgroundTint="#F16D26" />
+
+        <!-- Phone Label -->
+        <TextView
+            android:id="@+id/tvPhone"
+            android:layout_below="@id/editEmail"
+            android:layout_marginTop="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Telefone"
+            android:textColor="#616161"
+            android:textSize="16sp" />
+
+        <!-- Phone Input -->
+        <EditText
+            android:id="@+id/editPhone"
+            android:layout_below="@id/tvPhone"
+            android:layout_marginTop="0dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="(00) 0 0000-0000"
+            android:inputType="phone"
+            android:backgroundTint="#F16D26" />
+
+        <!-- Password Label -->
+        <TextView
+            android:id="@+id/tvPassword"
+            android:layout_below="@id/editPhone"
+            android:layout_marginTop="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Senha"
+            android:textColor="#616161"
+            android:textSize="16sp" />
+
+        <!-- Password Input -->
+        <EditText
+            android:id="@+id/editPassword"
+            android:layout_below="@id/tvPassword"
+            android:layout_marginTop="0dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Senha"
+            android:inputType="textPassword"
+            android:backgroundTint="#F16D26" />
+
+        <!-- Confirm Password Label -->
+        <TextView
+            android:id="@+id/tvConfirmPassword"
+            android:layout_below="@id/editPassword"
+            android:layout_marginTop="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Confirmar Senha"
+            android:textColor="#616161"
+            android:textSize="16sp" />
+
+        <!-- Confirm Password Input -->
+        <EditText
+            android:id="@+id/editConfirmPassword"
+            android:layout_below="@id/tvConfirmPassword"
+            android:layout_marginTop="0dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Confirmar Senha"
+            android:inputType="textPassword"
+            android:backgroundTint="#F16D26" />
+
+        <!-- Create Account Button -->
+        <Button
+            android:id="@+id/btnCreateAccount"
+            android:layout_below="@id/editConfirmPassword"
+            android:layout_marginTop="32dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Criar Conta"
+            android:backgroundTint="#F16D26"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold" />
+
+        <!-- Login Option -->
+        <LinearLayout
+            android:id="@+id/loginContainer"
+            android:layout_below="@id/btnCreateAccount"
+            android:layout_marginTop="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvAlreadyHaveAccount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="75dp"
+                android:text="Já tem uma conta?"
+                android:textColor="#9E9E9E"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/tvLogin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=" Login"
+                android:textColor="#F16D26"
+                android:textStyle="bold"
+                android:textSize="14sp"
+                android:clickable="true"
+                android:focusable="true" />
+        </LinearLayout>
+
+    </RelativeLayout>
+</ScrollView>

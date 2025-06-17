@@ -1,0 +1,84 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/home"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFCFC">
+
+    <!-- Logo -->
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="194dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="10dp"
+        android:contentDescription="@string/logo_desc"
+        android:src="@drawable/logo_eta" />
+
+    <!-- Orange Bottom Wave Background -->
+        <ImageView
+            android:id="@+id/bg_orange_down"
+            android:layout_width="match_parent"
+            android:layout_height="550dp"
+            android:layout_marginTop="290dp"
+            android:contentDescription="@string/bg_orange_cresc"
+            android:scaleType="centerCrop"
+            android:src="@drawable/bg_orange_down" />
+
+        <!-- Container for Fragments -->
+        <FrameLayout
+            android:id="@+id/fragment_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="150dp" />
+
+        <!-- Bottom Navigation Bar -->
+        <RelativeLayout
+            android:id="@+id/bottomBarContainer"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:layout_gravity="bottom"
+            android:layout_alignParentBottom="true">
+
+            <!-- Background SVG -->
+            <ImageView
+                android:id="@+id/bottomNavBar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/bottombar"
+                android:scaleType="fitXY"
+                android:contentDescription="Bottom Navigation" />
+
+            <!-- Clickable Transparent Zones -->
+            <ImageView
+                android:id="@+id/nav_vendas"
+                android:layout_width="90dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentStart="true"
+                android:clickable="true"
+                android:background="@android:color/transparent" />
+
+            <ImageView
+                android:id="@+id/nav_estoque"
+                android:layout_width="90dp"
+                android:layout_height="match_parent"
+                android:layout_toEndOf="@id/nav_vendas"
+                android:clickable="true"
+                android:background="@android:color/transparent" />
+
+            <ImageView
+                android:id="@+id/nav_pedidos"
+                android:layout_width="90dp"
+                android:layout_height="match_parent"
+                android:layout_toEndOf="@id/nav_estoque"
+                android:clickable="true"
+                android:background="@android:color/transparent" />
+
+            <ImageView
+                android:id="@+id/nav_produtos"
+                android:layout_width="90dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentEnd="true"
+                android:clickable="true"
+                android:background="@android:color/transparent" />
+        </RelativeLayout>
+
+</FrameLayout>

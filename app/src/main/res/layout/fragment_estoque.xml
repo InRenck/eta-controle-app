@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#FFFCFC">
+
+    <!-- Background Orange -->
+    <ImageView
+        android:id="@+id/bg_orange_down"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:layout_gravity="bottom"
+        android:scaleType="centerCrop"
+        android:contentDescription="@string/bg_orange_cresc"
+        android:src="@drawable/bg_orange_down" />
+
+    <!-- Content -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp">
+
+        <!-- Logo -->
+        <ImageView
+            android:id="@+id/logo"
+            android:layout_width="150dp"
+            android:layout_height="100dp"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="10dp"
+            android:contentDescription="@string/logo_desc"
+            android:src="@drawable/logo_eta"
+            />
+
+        <!-- Title -->
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignTop="@id/logo"
+            android:text="@string/title_estoque"
+            android:textColor="#424242"
+            android:textSize="32sp"
+            android:textStyle="bold" />
+
+        <!-- Search Bar -->
+        <EditText
+            android:id="@+id/searchBar"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_below="@id/logo"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/search_bar"
+            android:clickable="true"
+            android:drawableStart="@android:drawable/ic_menu_search"
+            android:focusable="true"
+            android:hint="@string/hint_search_estoque"
+            android:inputType="text"
+            android:padding="12dp"
+            android:textColor="#212121" />
+
+        <!-- Filter Bar -->
+        <RelativeLayout
+            android:id="@+id/filter_bar"
+            android:layout_width="match_parent"
+            android:layout_height="25dp"
+            android:layout_below="@id/searchBar"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/filter_bar"
+            android:elevation="2.06dp"
+            android:textColor="@color/black"/>
+
+        <!-- RecyclerView for Estoque Items -->
+        <include
+            android:layout="@layout/item_estoque"
+            android:layout_below="@id/filter_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/recyclerEstoque" />
+
+
+        <!-- Bottom Navigation Bar -->
+        <RelativeLayout
+            android:id="@+id/bottomBarContainer"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:layout_alignParentBottom="true">
+
+            <ImageView
+                android:id="@+id/bottomNavBar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="@string/desc_bottom_nav"
+                android:scaleType="fitXY"
+                android:src="@drawable/bottombar" />
+
+            <ImageView
+                android:id="@+id/nav_vendas"
+                android:layout_width="90dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentStart="true"
+                android:background="@android:color/transparent"
+                android:clickable="true"
+                android:contentDescription="@string/desc_nav_vendas"
+                android:focusable="true" />
+
+            <ImageView
+                android:id="@+id/nav_estoque"
+                android:layout_width="90dp"
+                android:layout_height="match_parent"
+                android:layout_toEndOf="@id/nav_vendas"
+                android:background="@android:color/transparent"
+                android:clickable="true"
+                android:contentDescription="@string/desc_nav_estoque"
+                android:focusable="true" />
+
+            <ImageView
+                android:id="@+id/nav_pedidos"
+                android:layout_width="90dp"
+                android:layout_height="match_parent"
+                android:layout_toEndOf="@id/nav_estoque"
+                android:background="@android:color/transparent"
+                android:clickable="true"
+                android:contentDescription="@string/desc_nav_pedidos"
+                android:focusable="true" />
+
+            <ImageView
+                android:id="@+id/nav_produtos"
+                android:layout_width="90dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentEnd="true"
+                android:background="@android:color/transparent"
+                android:clickable="true"
+                android:contentDescription="@string/desc_nav_produtos"
+                android:focusable="true" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+</FrameLayout>

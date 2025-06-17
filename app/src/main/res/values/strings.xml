@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name">ETAControleApp</string>
+    <string name="continuar">Continuar</string>
+    <string name="bg_orange_desc">Top background design</string>
+    <string name="logo_desc">ETA Logo</string>
+    <string name="continue_text_desc">Continue text</string>
+    <string name="arrow_button_desc">Continue button arrow</string>
+    <string name="sign_in">Entrar</string>
+    <string name="email">E-mail</string>
+    <string name="senha">Senha</string>
+    <string name="login">Login</string>
+    <string name="bg_orange_cresc">background design down</string>
+    <string name="title_vendas">Vendas</string>
+    <string name="hint_search_vendas">Buscar vendas...</string>
+    <string name="desc_bottom_nav">Barra de navegação inferior</string>
+    <string name="desc_nav_vendas">Navegar para Vendas</string>
+    <string name="desc_nav_estoque">Navegar para Estoque</string>
+    <string name="desc_nav_pedidos">Navegar para Pedidos</string>
+    <string name="desc_nav_produtos">Navegar para Produtos</string>
+    <string name="title_estoque">Estoque</string>
+    <string name="title_produtos">Produtos</string>
+    <string name="title_pedidos">Pedidos</string>
+    <string name="hint_search_estoque">Buscar produto...</string>
+    <string name="hint_search_pedido">Buscar pedido...</string>
+    <string name="title_cardapio">Cardapio</string>
+    <string name="cliente_info">Informações do Cliente</string>
+    <string name="salvar_pedido">Salvar Pedido</string>
+    <string name="nome_cliente_hint">Nome do Cliente</string>
+    <string name="telefone_hint">Telefone (Opcional)</string>
+    <string name="observacao_hint">Observação...</string>
+
+
+</resources>
