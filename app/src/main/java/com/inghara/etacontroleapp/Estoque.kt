@@ -1,9 +1,24 @@
 package com.inghara.etacontroleapp
 
-class EstoqueItem {
+data class EstoqueItem(
         val nome: String,
-        val estoque: Int,
+        var estoque: Int,
         val dataAtualizacao: String,
         val status: String
+)
+{
+        val statusCalculado: StatusEstoque
+                get() {
+                        return when {
+                                estoque == 0 -> StatusEstoque.FALTANDO
+                                estoque <= 10 -> StatusEstoque.PERTO_DE_ACABAR
+                                else -> StatusEstoque.EM_ESTOQUE
+                        }
+                }
+}
 
+enum class StatusEstoque {
+        EM_ESTOQUE,
+        PERTO_DE_ACABAR,
+        FALTANDO
 }

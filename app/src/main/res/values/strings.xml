@@ -28,6 +28,7 @@
     <string name="nome_cliente_hint">Nome do Cliente</string>
     <string name="telefone_hint">Telefone (Opcional)</string>
     <string name="observacao_hint">Observação...</string>
-
+    <string name="item_details">Estoque: %1$d | Status: %2$s</string>
+   <string name="adicionar_novo_produto">Adicionar novo produto</string>
 
 </resources>

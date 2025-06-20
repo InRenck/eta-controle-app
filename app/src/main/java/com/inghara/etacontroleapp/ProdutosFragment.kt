@@ -1,3 +1,6 @@
+package com.inghara.etacontroleapp
+
+import ProdutoAdapter
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -5,11 +8,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.inghara.etacontroleapp.Produto
-import com.inghara.etacontroleapp.R
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class ProdutosFragment : Fragment() {
 
@@ -23,15 +26,24 @@ class ProdutosFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_produtos, container, false)
+        // Infla o layout para este fragmento
+        return inflater.inflate(R.layout.fragment_produtos, container, false)
+    }
 
+    // onViewCreated é chamado DEPOIS que a view do fragmento foi criada.
+    // É o lugar ideal para configurar as views.
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        // Inicializa as views usando a 'view' que foi criada
         searchBar = view.findViewById(R.id.searchBar)
         recyclerView = view.findViewById(R.id.recyclerViewProdutos)
+        val fabAdicionar: FloatingActionButton = view.findViewById(R.id.fab_add_produto)
 
-        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        // Configura o Adapter e o RecyclerView
         adapter = ProdutoAdapter(listaFiltrada,
             onSalvarClick = { produto ->
-                // TODO: handle salvar
+                // TODO: Lógica para salvar alterações em um produto
             },
             onDeletarClick = { produto ->
                 listaCompleta.remove(produto)
@@ -39,15 +51,22 @@ class ProdutosFragment : Fragment() {
                 adapter.notifyDataSetChanged()
             }
         )
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = adapter
 
+        // Configura o listener do botão FAB
+        fabAdicionar.setOnClickListener {
+            // Lógica para ir para a tela de adicionar novo produto.
+            Toast.makeText(context, "Abrir tela de cadastro de produto...", Toast.LENGTH_SHORT).show()
+        }
+
+        // Carrega os dados e configura a busca
         carregarProdutosFalsos()
         configurarBusca()
-
-        return view
     }
 
     private fun carregarProdutosFalsos() {
+        listaCompleta.clear() // Limpa para não duplicar dados
         listaCompleta.addAll(
             listOf(
                 Produto("Combo Hamburguer de Costela", 57.0, "Ativo"),
@@ -56,6 +75,7 @@ class ProdutosFragment : Fragment() {
                 Produto("Refrigerante", 8.0, "Ativo")
             )
         )
+        listaFiltrada.clear()
         listaFiltrada.addAll(listaCompleta)
         adapter.notifyDataSetChanged()
     }
@@ -65,9 +85,13 @@ class ProdutosFragment : Fragment() {
             override fun afterTextChanged(s: Editable?) {
                 val query = s.toString().lowercase()
                 listaFiltrada.clear()
-                listaFiltrada.addAll(listaCompleta.filter {
-                    it.nome.lowercase().contains(query)
-                })
+                if (query.isEmpty()) {
+                    listaFiltrada.addAll(listaCompleta)
+                } else {
+                    listaFiltrada.addAll(listaCompleta.filter {
+                        it.nome.lowercase().contains(query)
+                    })
+                }
                 adapter.notifyDataSetChanged()
             }
 

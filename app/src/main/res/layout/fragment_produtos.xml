@@ -1,27 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="#FFFCFC">
+    android:background="#FFFCFC"
+    tools:context=".ProdutosFragment">
 
-    <!-- Background Orange -->
     <ImageView
         android:id="@+id/bg_orange_down"
         android:layout_width="match_parent"
-        android:layout_height="550dp"
+        android:layout_height="400dp"
         android:layout_gravity="bottom"
         android:scaleType="centerCrop"
         android:contentDescription="@string/bg_orange_cresc"
         android:src="@drawable/bg_orange_down" />
 
-    <!-- Content Overlay -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="16dp">
 
-        <!-- Logo -->
         <ImageView
             android:id="@+id/logo"
             android:layout_width="150dp"
@@ -29,25 +28,21 @@
             android:layout_alignParentStart="true"
             android:layout_marginTop="10dp"
             android:contentDescription="@string/logo_desc"
-            android:src="@drawable/logo_eta"
-            />
+            android:src="@drawable/logo_eta" />
 
-        <!-- Title -->
         <TextView
             android:id="@+id/tvTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignTop="@id/logo"
+            android:layout_alignParentEnd="true"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="16dp"
             android:text="@string/title_cardapio"
             android:textColor="#424242"
             android:textSize="32sp"
-            android:textStyle="bold"
-            android:layout_alignParentEnd="true"
-            android:layout_alignTop="@id/logo"
-            />
+            android:textStyle="bold" />
 
-        <!-- Search Bar -->
         <EditText
             android:id="@+id/searchBar"
             android:layout_width="match_parent"
@@ -62,71 +57,27 @@
             android:padding="12dp"
             android:textColor="#212121" />
 
-        <!-- Cardapio -->
-        <include
-            android:layout="@layout/item_cardapio"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewProdutos"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_below="@id/searchBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/recyclerViewProdutos" />
+            android:clipToPadding="false"
+            android:paddingBottom="16dp"
+            tools:listitem="@layout/item_cardapio" />
 
-        <!-- Bottom Navigation Bar -->
-        <RelativeLayout
-            android:id="@+id/bottomBarContainer"
-            android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:layout_alignParentBottom="true">
-
-            <!-- Background SVG -->
-            <ImageView
-                android:id="@+id/bottomNavBar"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:contentDescription="@string/desc_bottom_nav"
-                android:scaleType="fitXY"
-                android:src="@drawable/bottombar" />
-
-            <!-- Navigation Buttons -->
-            <ImageView
-                android:id="@+id/nav_vendas"
-                android:layout_width="90dp"
-                android:layout_height="match_parent"
-                android:layout_alignParentStart="true"
-                android:background="@android:color/transparent"
-                android:clickable="true"
-                android:contentDescription="@string/desc_nav_vendas"
-                android:focusable="true" />
-
-            <ImageView
-                android:id="@+id/nav_estoque"
-                android:layout_width="90dp"
-                android:layout_height="match_parent"
-                android:layout_toEndOf="@id/nav_vendas"
-                android:background="@android:color/transparent"
-                android:clickable="true"
-                android:contentDescription="@string/desc_nav_estoque"
-                android:focusable="true" />
-
-            <ImageView
-                android:id="@+id/nav_pedidos"
-                android:layout_width="90dp"
-                android:layout_height="match_parent"
-                android:layout_toEndOf="@id/nav_estoque"
-                android:background="@android:color/transparent"
-                android:clickable="true"
-                android:contentDescription="@string/desc_nav_pedidos"
-                android:focusable="true" />
-
-            <ImageView
-                android:id="@+id/nav_produtos"
-                android:layout_width="90dp"
-                android:layout_height="match_parent"
-                android:layout_alignParentEnd="true"
-                android:background="@android:color/transparent"
-                android:clickable="true"
-                android:contentDescription="@string/desc_nav_produtos"
-                android:focusable="true" />
-        </RelativeLayout>
     </RelativeLayout>
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_add_produto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:backgroundTint="@color/orange"
+        android:clickable="true"
+        android:contentDescription="@string/adicionar_novo_produto"
+        android:focusable="true"
+        app:srcCompat="@drawable/ic_add"
+        app:tint="@android:color/white" />
 </FrameLayout>

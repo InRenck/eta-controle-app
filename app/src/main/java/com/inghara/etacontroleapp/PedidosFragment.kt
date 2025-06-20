@@ -25,7 +25,7 @@ class PedidosFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_pedidos, container, false)
 
         recyclerView = view.findViewById(R.id.recyclerViewProdutos)
-        tvTotal = view.findViewById(R.id.tvTotal)  // Use o ID correto conforme XML
+        tvTotal = view.findViewById(R.id.tvTotalPedido)
 
         adapter = ProdutoPedidoAdapter(listaProdutos) { produto ->
             adapter.removeProduto(produto)

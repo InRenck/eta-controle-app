@@ -168,14 +168,4 @@
                 android:layout_height="120dp" />
         </LinearLayout>
     </ScrollView>
-
-    <!-- Bottom Bar Fixa -->
-    <ImageView
-        android:id="@+id/bottomNavBar"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_gravity="bottom"
-        android:src="@drawable/bottombar"
-        android:scaleType="fitXY"
-        android:contentDescription="Bottom Navigation" />
 </FrameLayout>
