@@ -1,5 +1,6 @@
 package com.inghara.etacontroleapp
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -7,21 +8,20 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
 class EstoqueAdapter(
-    // A lista inicial que o adapter recebe.
-    var itemList: List<EstoqueItem>,
+    var itemList: MutableList<EstoqueItem>,
     private val listener: OnItemClickListener
-) :
-    RecyclerView.Adapter<EstoqueAdapter.EstoqueViewHolder>() {
+) : RecyclerView.Adapter<EstoqueAdapter.EstoqueViewHolder>() {
 
+    // A interface agora espera o objeto inteiro, não a posição
     interface OnItemClickListener {
-        fun onAdicionarClick(position: Int)
-        fun onRemoverClick(position: Int)
+        fun onAdicionarClick(item: EstoqueItem)
+        fun onRemoverClick(item: EstoqueItem)
     }
 
-    // Método para atualizar a lista do adapter de forma eficiente
+    @SuppressLint("NotifyDataSetChanged")
     fun atualizarLista(novaLista: List<EstoqueItem>) {
-        itemList = novaLista
-        notifyDataSetChanged() // Avisa o RecyclerView para se redesenhar
+        itemList = novaLista.toMutableList()
+        notifyDataSetChanged()
     }
 
     inner class EstoqueViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -42,18 +42,17 @@ class EstoqueAdapter(
 
         holder.name.text = item.nome
 
-        // Vamos usar o statusCalculado que criamos!
         val statusTexto = when (item.statusCalculado) {
             StatusEstoque.EM_ESTOQUE -> "Em Estoque"
             StatusEstoque.PERTO_DE_ACABAR -> "Perto de Acabar"
             StatusEstoque.FALTANDO -> "Faltando"
         }
         holder.quantity.text = "Estoque: ${item.estoque} | Status: $statusTexto"
+        holder.price.text = ""
 
-        holder.price.text = "" // Opcional: defina um preço ou esconda
-
-        holder.addButton.setOnClickListener { listener.onAdicionarClick(position) }
-        holder.removeButton.setOnClickListener { listener.onRemoverClick(position) }
+        // Agora passamos o 'item' inteiro no clique
+        holder.addButton.setOnClickListener { listener.onAdicionarClick(item) }
+        holder.removeButton.setOnClickListener { listener.onRemoverClick(item) }
     }
 
     override fun getItemCount() = itemList.size

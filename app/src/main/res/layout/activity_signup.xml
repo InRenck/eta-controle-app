@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
@@ -15,6 +16,7 @@
             android:id="@+id/imageWave"
             android:layout_width="match_parent"
             android:layout_height="200dp"
+            android:importantForAccessibility="no"
             android:src="@drawable/bg_orange"
             android:scaleType="fitXY" />
 
@@ -28,7 +30,8 @@
             android:text="Criar Conta"
             android:textColor="#424242"
             android:textSize="30sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            tools:ignore="HardcodedText" />
 
         <!-- Email Label -->
         <TextView
@@ -39,18 +42,22 @@
             android:layout_height="wrap_content"
             android:text="Email"
             android:textColor="#616161"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            tools:ignore="HardcodedText" />
 
         <!-- Email Input -->
         <EditText
             android:id="@+id/editEmail"
-            android:layout_below="@id/tvEmail"
-            android:layout_marginTop="0dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/tvEmail"
+            android:layout_marginTop="0dp"
+            android:autofillHints="emailAddress"
+            android:backgroundTint="#F16D26"
             android:hint="demo@email.com"
             android:inputType="textEmailAddress"
-            android:backgroundTint="#F16D26" />
+            android:minHeight="48dp"
+            tools:ignore="HardcodedText" />
 
         <!-- Phone Label -->
         <TextView
@@ -61,18 +68,22 @@
             android:layout_height="wrap_content"
             android:text="Telefone"
             android:textColor="#616161"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            tools:ignore="HardcodedText" />
 
         <!-- Phone Input -->
         <EditText
             android:id="@+id/editPhone"
-            android:layout_below="@id/tvPhone"
-            android:layout_marginTop="0dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/tvPhone"
+            android:layout_marginTop="0dp"
+            android:autofillHints="phone"
+            android:backgroundTint="#F16D26"
             android:hint="(00) 0 0000-0000"
             android:inputType="phone"
-            android:backgroundTint="#F16D26" />
+            android:minHeight="48dp"
+            tools:ignore="HardcodedText" />
 
         <!-- Password Label -->
         <TextView
@@ -83,18 +94,22 @@
             android:layout_height="wrap_content"
             android:text="Senha"
             android:textColor="#616161"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            tools:ignore="HardcodedText" />
 
         <!-- Password Input -->
         <EditText
             android:id="@+id/editPassword"
-            android:layout_below="@id/tvPassword"
-            android:layout_marginTop="0dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/tvPassword"
+            android:layout_marginTop="0dp"
+            android:autofillHints="password"
+            android:backgroundTint="#F16D26"
             android:hint="Senha"
             android:inputType="textPassword"
-            android:backgroundTint="#F16D26" />
+            android:minHeight="48dp"
+            tools:ignore="HardcodedText" />
 
         <!-- Confirm Password Label -->
         <TextView
@@ -105,18 +120,22 @@
             android:layout_height="wrap_content"
             android:text="Confirmar Senha"
             android:textColor="#616161"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            tools:ignore="HardcodedText" />
 
         <!-- Confirm Password Input -->
         <EditText
             android:id="@+id/editConfirmPassword"
-            android:layout_below="@id/tvConfirmPassword"
-            android:layout_marginTop="0dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/tvConfirmPassword"
+            android:layout_marginTop="0dp"
+            android:autofillHints="password"
+            android:backgroundTint="#F16D26"
             android:hint="Confirmar Senha"
             android:inputType="textPassword"
-            android:backgroundTint="#F16D26" />
+            android:minHeight="48dp"
+            tools:ignore="HardcodedText" />
 
         <!-- Create Account Button -->
         <Button
@@ -128,7 +147,8 @@
             android:text="Criar Conta"
             android:backgroundTint="#F16D26"
             android:textColor="#FFFFFF"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            tools:ignore="HardcodedText" />
 
         <!-- Login Option -->
         <LinearLayout
@@ -143,21 +163,23 @@
                 android:id="@+id/tvAlreadyHaveAccount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="75dp"
+                android:layout_marginStart="75dp"
                 android:text="Já tem uma conta?"
                 android:textColor="#9E9E9E"
-                android:textSize="14sp" />
+                android:textSize="14sp"
+                tools:ignore="HardcodedText" />
 
             <TextView
                 android:id="@+id/tvLogin"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
                 android:text=" Login"
                 android:textColor="#F16D26"
-                android:textStyle="bold"
                 android:textSize="14sp"
-                android:clickable="true"
-                android:focusable="true" />
+                android:textStyle="bold"
+                tools:ignore="HardcodedText,TouchTargetSizeCheck" />
         </LinearLayout>
 
     </RelativeLayout>

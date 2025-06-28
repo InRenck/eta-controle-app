@@ -1,7 +1,10 @@
 package com.inghara.etacontroleapp
 
+import java.util.UUID
+
 data class Produto(
+    val id: String = UUID.randomUUID().toString(),
     val nome: String,
     val preco: Double,
-    val status: String? = null
+    var status: String? = null
 )

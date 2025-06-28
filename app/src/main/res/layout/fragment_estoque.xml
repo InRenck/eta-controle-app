@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
-<FrameLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#FFFCFC">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#FFFCFC">
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#FFFCFC">
 
     <!-- Background Orange -->
     <ImageView
@@ -43,6 +46,8 @@
             android:layout_alignTop="@id/logo"
             android:text="@string/title_estoque"
             android:textColor="#424242"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="100dp"
             android:textSize="32sp"
             android:textStyle="bold"
             android:layout_toEndOf="@id/logo" />
@@ -115,8 +120,18 @@
             android:background="@android:color/transparent"
             tools:listitem="@layout/item_estoque" />
 
-
     </RelativeLayout>
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_add_estoque"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:src="@drawable/ic_add"
+        app:tint="@color/orange"
+        app:backgroundTint="@color/white"
+        android:contentDescription="Adicionar item ao estoque"/>
+
 </FrameLayout>
-</layout>
+</FrameLayout>

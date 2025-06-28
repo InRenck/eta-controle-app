@@ -9,9 +9,14 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.chip.ChipGroup
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.inghara.etacontroleapp.viewmodel.EstoqueViewModel
+import androidx.navigation.fragment.findNavController
+
 
 class EstoqueFragment : Fragment(), EstoqueAdapter.OnItemClickListener {
 
@@ -20,41 +25,40 @@ class EstoqueFragment : Fragment(), EstoqueAdapter.OnItemClickListener {
     private lateinit var searchBar: EditText
     private lateinit var filterChipGroup: ChipGroup
 
-    // A lista mestre original que nunca será modificada diretamente.
-    private val listaMestre = mutableListOf(
-        EstoqueItem("Hambúrguer de Picanha", 15, "19/06/2025", ""),
-        EstoqueItem("Refrigerante", 8, "18/06/2025", ""),
-        EstoqueItem("Batata Frita", 0, "17/06/2025", ""),
-        EstoqueItem("Água Mineral", 50, "20/06/2025", "")
-    )
+    private val viewModel: EstoqueViewModel by activityViewModels()
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    private var listaCompleta: List<EstoqueItem> = listOf()
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_estoque, container, false)
     }
 
-    // É melhor prática configurar as views e listeners aqui.
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Inicializa as Views
         recyclerView = view.findViewById(R.id.recyclerEstoque)
         searchBar = view.findViewById(R.id.searchBar)
         filterChipGroup = view.findViewById(R.id.filterChipGroup)
+        val fabAdd: FloatingActionButton = view.findViewById(R.id.fab_add_estoque)
 
-        // Configura o Adapter e o RecyclerView
-        adapter = EstoqueAdapter(listaMestre, this)
+        adapter = EstoqueAdapter(mutableListOf(), this)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = adapter
 
-        // Configura os Listeners
-        setupSearchListener()
-        setupFilterListener()
+        setupSearchAndFilter()
+        fabAdd.setOnClickListener {
+            // TODO: No próximo passo, vamos navegar para a tela de cadastro de estoque
+            findNavController().navigate(R.id.action_estoqueFragment_to_cadastroEstoqueFragment)
+        }
+
+        viewModel.listaEstoque.observe(viewLifecycleOwner) { lista ->
+
+            listaCompleta = lista
+            aplicarFiltros()
+        }
     }
 
-    private fun setupSearchListener() {
+    private fun setupSearchAndFilter() {
         searchBar.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -62,18 +66,12 @@ class EstoqueFragment : Fragment(), EstoqueAdapter.OnItemClickListener {
             }
             override fun afterTextChanged(s: Editable?) {}
         })
-    }
-
-    private fun setupFilterListener() {
-        filterChipGroup.setOnCheckedStateChangeListener { group, checkedId ->
-            aplicarFiltros()
-        }
+        filterChipGroup.setOnCheckedStateChangeListener { _, _ -> aplicarFiltros() }
     }
 
     private fun aplicarFiltros() {
-        var listaFiltrada = listaMestre.toList() // Começa com uma cópia da lista completa
+        var listaFiltrada = listaCompleta.toList()
 
-        // 1. Aplica o filtro por STATUS (Chip)
         val selectedChipId = filterChipGroup.checkedChipId
         if (selectedChipId != View.NO_ID && selectedChipId != R.id.chipTodos) {
             listaFiltrada = listaFiltrada.filter { item ->
@@ -86,7 +84,6 @@ class EstoqueFragment : Fragment(), EstoqueAdapter.OnItemClickListener {
             }
         }
 
-        // 2. Aplica o filtro por TEXTO (Busca) sobre o resultado anterior
         val textoBusca = searchBar.text.toString()
         if (textoBusca.isNotEmpty()) {
             listaFiltrada = listaFiltrada.filter {
@@ -94,26 +91,14 @@ class EstoqueFragment : Fragment(), EstoqueAdapter.OnItemClickListener {
             }
         }
 
-        // 3. Atualiza o adapter com o resultado final
         adapter.atualizarLista(listaFiltrada)
     }
 
-
-    override fun onAdicionarClick(position: Int) {
-        val clickedItem = adapter.itemList[position]
-        clickedItem.estoque++
-        aplicarFiltros() // Re-aplica os filtros para caso o status do item mude
-        Toast.makeText(requireContext(), "Adicionado 1 item ao ${clickedItem.nome}", Toast.LENGTH_SHORT).show()
+    override fun onAdicionarClick(item: EstoqueItem) {
+        viewModel.incrementarEstoque(item)
     }
 
-    override fun onRemoverClick(position: Int) {
-        val clickedItem = adapter.itemList[position]
-        if (clickedItem.estoque > 0) {
-            clickedItem.estoque--
-            aplicarFiltros() // Re-aplica os filtros
-            Toast.makeText(requireContext(), "Removido 1 item de ${clickedItem.nome}", Toast.LENGTH_SHORT).show()
-        } else {
-            Toast.makeText(requireContext(), "${clickedItem.nome} já está com estoque zerado.", Toast.LENGTH_SHORT).show()
-        }
+    override fun onRemoverClick(item: EstoqueItem) {
+        viewModel.decrementarEstoque(item)
     }
 }

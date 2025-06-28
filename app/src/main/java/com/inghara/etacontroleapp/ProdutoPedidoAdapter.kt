@@ -1,5 +1,6 @@
 package com.inghara.etacontroleapp
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,15 +9,23 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
 class ProdutoPedidoAdapter(
-    private val produtos: MutableList<Produto>,
+    private var produtos: MutableList<Produto>,
     private val onRemoveClick: (Produto) -> Unit
 ) : RecyclerView.Adapter<ProdutoPedidoAdapter.ViewHolder>() {
 
-    var onDataChanged: (() -> Unit)? = null
+    /**
+     * Esta é a única função que o Fragment precisa para atualizar o Adapter.
+     * Ela recebe a nova lista do ViewModel e avisa o RecyclerView para se redesenhar.
+     */
+    @SuppressLint("NotifyDataSetChanged")
+    fun atualizarLista(novaLista: MutableList<Produto>) {
+        produtos = novaLista
+        notifyDataSetChanged()
+    }
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val nomeProduto: TextView = view.findViewById(R.id.tvNomeProduto)
-        val btnRemover: Button = view.findViewById(R.id.btnRemover)
+        private val nomeProduto: TextView = view.findViewById(R.id.tvNomeProduto)
+        private val btnRemover: Button = view.findViewById(R.id.btnRemover)
 
         fun bind(produto: Produto) {
             nomeProduto.text = produto.nome
@@ -37,21 +46,4 @@ class ProdutoPedidoAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(produtos[position])
     }
-
-    fun addProduto(produto: Produto) {
-        produtos.add(produto)
-        notifyItemInserted(produtos.size - 1)
-        onDataChanged?.invoke()
-    }
-
-    fun removeProduto(produto: Produto) {
-        val index = produtos.indexOf(produto)
-        if (index != -1) {
-            produtos.removeAt(index)
-            notifyItemRemoved(index)
-            onDataChanged?.invoke()
-        }
-    }
-
-    fun getLista(): List<Produto> = produtos
 }

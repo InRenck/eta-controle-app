@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.inghara.etacontroleapp.HomeFragment"
+        android:label="fragment_home"
+        tools:layout="@layout/fragment_home" />
+
+    <fragment
+        android:id="@+id/vendasFragment"
+        android:name="com.inghara.etacontroleapp.ui.vendas.VendasFragment"
+        android:label="fragment_vendas"
+        tools:layout="@layout/fragment_vendas" />
+
+    <fragment
+        android:id="@+id/estoqueFragment"
+        android:name="com.inghara.etacontroleapp.EstoqueFragment"
+        android:label="fragment_estoque"
+        tools:layout="@layout/fragment_estoque">
+        <action
+            android:id="@+id/action_estoqueFragment_to_cadastroEstoqueFragment"
+            app:destination="@id/cadastroEstoqueFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/cadastroEstoqueFragment"
+        android:name="com.inghara.etacontroleapp.CadastroEstoqueFragment"
+        android:label="CadastroEstoqueFragment"
+        tools:layout="@layout/fragment_cadastro_estoque" />
+
+    <fragment
+        android:id="@+id/pedidosFragment"
+        android:name="com.inghara.etacontroleapp.PedidosFragment"
+        android:label="fragment_pedidos"
+        tools:layout="@layout/fragment_pedidos" >
+        <action
+            android:id="@+id/action_pedidosFragment_to_selecaoProdutoFragment"
+            app:destination="@id/selecaoProdutoFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/produtosFragment"
+        android:name="com.inghara.etacontroleapp.ProdutosFragment"
+        android:label="fragment_produtos"
+        tools:layout="@layout/fragment_produtos">
+        <action
+            android:id="@+id/action_produtosFragment_to_cadastroProdutoFragment"
+            app:destination="@id/cadastroProdutoFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/selecaoProdutoFragment"
+        android:name="com.inghara.etacontroleapp.SelecaoProdutoFragment"
+        android:label="fragment_selecao_produto"
+        tools:layout="@layout/fragment_selecao_produto" />
+
+    <fragment
+        android:id="@+id/cadastroProdutoFragment"
+        android:name="com.inghara.etacontroleapp.CadastroProdutoFragment"
+        android:label="fragment_cadastro_produto"
+        tools:layout="@layout/fragment_cadastro_produto">
+
+        <argument
+            android:name="produtoId"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
+
+    </fragment>
+</navigation>

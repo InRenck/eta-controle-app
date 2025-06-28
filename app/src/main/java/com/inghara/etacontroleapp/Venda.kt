@@ -6,5 +6,5 @@ data class Venda(
     val data: String,
     val hora: String,
     val total: String,
-    val status: String
+    var status: String
 )

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "890130340354",
+    "project_id": "etacontroleapp",
+    "storage_bucket": "etacontroleapp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:890130340354:android:1d47c35e74b70ceb32651b",
+        "android_client_info": {
+          "package_name": "com.inghara.etacontroleapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBC0OWWHN_tgsrH8UfuXPmByShZS31cOPw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

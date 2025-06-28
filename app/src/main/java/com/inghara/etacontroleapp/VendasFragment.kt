@@ -4,38 +4,60 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.inghara.etacontroleapp.R
 import com.inghara.etacontroleapp.databinding.FragmentVendasBinding
 import com.inghara.etacontroleapp.model.Venda
+import com.inghara.etacontroleapp.viewmodel.VendasViewModel
+import androidx.appcompat.app.AlertDialog
 
 
-class VendasFragment : Fragment() {
+// PASSO 2.1: O Fragment agora "assina o contrato" da nossa interface
+class VendasFragment : Fragment(), VendaAdapter.OnVendaClickListener {
 
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var adapter: VendaAdapter
+    private var _binding: FragmentVendasBinding? = null
+    private val binding get() = _binding!!
+
+    private val viewModel: VendasViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_vendas, container, false)
+    ): View {
+        _binding = FragmentVendasBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        recyclerView = view.findViewById(R.id.recyclerVendas)
-        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        val listaVendas = listOf(
-            Venda("001", "João Silva", "12/06/2025", "14:30", "R$250,00", "Concluída"),
-            Venda("002", "Maria Oliveira", "13/06/2025", "10:15", "R$120,00", "Pendente"),
-            Venda("003", "Pedro Costa", "14/06/2025", "16:45", "R$330,00", "Cancelada")
-        )
+        binding.recyclerVendas.layoutManager = LinearLayoutManager(context)
 
-        adapter = VendaAdapter(listaVendas)
-        recyclerView.adapter = adapter
+        viewModel.listaVendas.observe(viewLifecycleOwner) { lista ->
 
-        return view
+            binding.recyclerVendas.adapter = VendaAdapter(lista, this)
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    override fun onVendaClick(venda: Venda) {
+        val statusOptions = arrayOf("Pendente", "Concluída", "Cancelada")
+
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("Alterar Status do Pedido #${venda.id}")
+
+        builder.setItems(statusOptions) { dialog, which ->
+            val novoStatus = statusOptions[which]
+
+            viewModel.atualizarStatusVenda(venda.id, novoStatus)
+        }
+
+        builder.create().show()
     }
 }
-
