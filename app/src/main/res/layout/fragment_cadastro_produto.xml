@@ -44,6 +44,15 @@
         tools:ignore="HardcodedText" />
 
     <Button
+        android:id="@+id/btnGerenciarIngredientes"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/receita"
+        android:layout_marginTop="16dp"
+        android:textColor="@color/orange"/>
+
+    <Button
         android:id="@+id/btnSalvarProduto"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

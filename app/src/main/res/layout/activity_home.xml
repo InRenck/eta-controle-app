@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,12 +7,25 @@
     android:background="#FFFCFC"
     tools:context=".MainActivity">
 
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragment_container"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:defaultNavHost="true"
+        app:navGraph="@navigation/nav_graph"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/bottomBarContainer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
     <FrameLayout
         android:id="@+id/bottomBarContainer"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="100dp"
-        android:layout_alignParentBottom="true">
-
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <ImageView
             android:layout_width="match_parent"
@@ -26,50 +39,12 @@
             android:layout_height="match_parent"
             android:gravity="center_vertical"
             android:orientation="horizontal">
-
-            <ImageView
-                android:id="@+id/nav_vendas"
-                style="@style/BottomNavIcon"
-                android:contentDescription="Vendas"
-                android:src="@drawable/ic_vendas" />
-
-            <ImageView
-                android:id="@+id/nav_estoque"
-                style="@style/BottomNavIcon"
-                android:contentDescription="Estoque"
-                android:src="@drawable/ic_estoque" />
-
-            <ImageView
-                android:id="@+id/nav_home"
-                style="@style/BottomNavIcon"
-                android:contentDescription="Menu"
-                android:src="@drawable/ic_home" />
-
-            <ImageView
-                android:id="@+id/nav_pedidos"
-                style="@style/BottomNavIcon"
-                android:contentDescription="Pedidos"
-                android:src="@drawable/ic_pedidos" />
-
-            <ImageView
-                android:id="@+id/nav_produtos"
-                style="@style/BottomNavIcon"
-                android:contentDescription="Produtos"
-                android:src="@drawable/ic_produtos" />
-
+            <ImageView style="@style/BottomNavIcon" android:id="@+id/nav_home" android:src="@drawable/ic_home" android:contentDescription="Menu"/>
+            <ImageView style="@style/BottomNavIcon" android:id="@+id/nav_vendas" android:src="@drawable/ic_vendas" android:contentDescription="Vendas"/>
+            <ImageView style="@style/BottomNavIcon" android:id="@+id/nav_estoque" android:src="@drawable/ic_estoque" android:contentDescription="Estoque"/>
+            <ImageView style="@style/BottomNavIcon" android:id="@+id/nav_pedidos" android:src="@drawable/ic_pedidos" android:contentDescription="Pedidos"/>
+            <ImageView style="@style/BottomNavIcon" android:id="@+id/nav_produtos" android:src="@drawable/ic_produtos" android:contentDescription="Produtos"/>
         </LinearLayout>
     </FrameLayout>
 
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/fragment_container"
-        android:name="androidx.navigation.fragment.NavHostFragment"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_above="@id/bottomBarContainer"
-        android:layout_below="@id/logo"
-        app:defaultNavHost="true"
-        app:navGraph="@navigation/nav_graph"
-        tools:ignore="NotSibling" />
-
-
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -127,6 +127,14 @@
             android:textColor="#FFFFFF"
             android:textStyle="bold" />
 
+        <ProgressBar
+            android:id="@+id/login_progress_bar"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center"
+            android:indeterminateTint="@android:color/white"
+            android:visibility="gone" />
+
 
         <LinearLayout
             android:id="@+id/signup_area"

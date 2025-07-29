@@ -27,7 +27,6 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Logo e Título -->
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
@@ -48,23 +47,9 @@
                     android:text="Pedidos"
                     android:textColor="#424242"
                     android:textSize="28sp"
-                    android:textStyle="bold"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignTop="@id/logo"/>
+                    android:textStyle="bold" />
             </LinearLayout>
 
-            <!-- Barra de Busca -->
-            <EditText
-                android:id="@+id/searchBar"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_marginTop="10dp"
-                android:background="@android:drawable/edit_text"
-                android:drawableStart="@android:drawable/ic_menu_search"
-                android:hint="Buscar pedido..."
-                android:padding="12dp" />
-
-            <!-- Informações do Cliente -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -93,7 +78,6 @@
                 android:minHeight="48dp"
                 tools:ignore="HardcodedText" />
 
-            <!-- Itens do Pedido -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -132,7 +116,6 @@
 
             </LinearLayout>
 
-            <!-- Total -->
             <TextView
                 android:id="@+id/tvTotalPedido"
                 android:layout_width="match_parent"
@@ -144,7 +127,6 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="16dp"/>
 
-            <!-- Observações -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -163,7 +145,6 @@
                 android:background="@android:drawable/edit_text"
                 android:layout_marginTop="4dp" />
 
-            <!-- Botão Salvar -->
             <Button
                 android:id="@+id/btnSalvarPedido"
                 android:layout_width="match_parent"
@@ -173,7 +154,6 @@
                 android:backgroundTint="#FF9800"
                 android:textColor="#FFF" />
 
-            <!-- Espaço final para não cortar conteúdo atrás da bottom bar -->
             <View
                 android:layout_width="match_parent"
                 android:layout_height="120dp" />

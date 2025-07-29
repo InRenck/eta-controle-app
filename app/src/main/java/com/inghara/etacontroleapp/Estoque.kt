@@ -1,14 +1,20 @@
 package com.inghara.etacontroleapp
 
-import java.util.UUID
+import android.os.Parcelable
+import com.google.firebase.firestore.DocumentId
+import com.google.firebase.firestore.Exclude
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 data class EstoqueItem(
-        val id: String = UUID.randomUUID().toString(),
-        val nome: String,
-        var estoque: Int,
-        var valor: Double,
-        var dataAtualizacao: String,
-) {
+        @DocumentId
+        var id: String? = null,
+        val nome: String = "",
+        var estoque: Int = 0,
+        var valor: Double = 0.0,
+        var dataAtualizacao: String = ""
+) : Parcelable {
+        @get:Exclude
         val statusCalculado: StatusEstoque
                 get() {
                         return when {

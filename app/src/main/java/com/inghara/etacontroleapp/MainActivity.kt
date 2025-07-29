@@ -15,12 +15,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
-        // Encontra o NavController a partir do container no XML
         val navHostFragment = supportFragmentManager
             .findFragmentById(R.id.fragment_container) as NavHostFragment
         navController = navHostFragment.navController
 
-        // Encontra os ícones da sua barra
         val navHome = findViewById<ImageView>(R.id.nav_home)
         val navVendas = findViewById<ImageView>(R.id.nav_vendas)
         val navEstoque = findViewById<ImageView>(R.id.nav_estoque)
@@ -29,42 +27,26 @@ class MainActivity : AppCompatActivity() {
 
         navIcons = listOf(navHome, navVendas, navEstoque, navPedidos, navProdutos)
 
-        // Configura os cliques para usar o NavController
-        navHome.setOnClickListener {
-            navController.navigate(R.id.homeFragment)
-        }
-        navVendas.setOnClickListener {
-            navController.navigate(R.id.vendasFragment)
-        }
-        navEstoque.setOnClickListener {
-            navController.navigate(R.id.estoqueFragment)
-        }
-        navPedidos.setOnClickListener {
-            navController.navigate(R.id.pedidosFragment)
-        }
-        navProdutos.setOnClickListener {
-            navController.navigate(R.id.produtosFragment)
-        }
+        navHome.setOnClickListener { navController.navigate(R.id.action_global_homeFragment) }
+        navVendas.setOnClickListener { navController.navigate(R.id.action_global_vendasFragment) }
+        navEstoque.setOnClickListener { navController.navigate(R.id.action_global_estoqueFragment) }
+        navPedidos.setOnClickListener { navController.navigate(R.id.action_global_pedidosFragment) }
+        navProdutos.setOnClickListener { navController.navigate(R.id.action_global_produtosFragment) }
 
-        // Sincroniza a cor do ícone com a tela atual
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            selecionarIconePeloDestino(destination.id)
+            val iconIdToSelect = when (destination.id) {
+                R.id.homeFragment -> R.id.nav_home
+                R.id.vendasFragment -> R.id.nav_vendas
+                R.id.estoqueFragment, R.id.cadastroEstoqueFragment -> R.id.nav_estoque
+                R.id.pedidosFragment, R.id.selecaoProdutoFragment -> R.id.nav_pedidos
+                R.id.produtosFragment, R.id.cadastroProdutoFragment -> R.id.nav_produtos
+                else -> 0
+            }
+            selecionarIcone(iconIdToSelect)
         }
     }
 
-    /**
-     * Atualiza a cor dos ícones com base no destino atual.
-     */
-    private fun selecionarIconePeloDestino(destinationId: Int) {
-        val iconIdToSelect = when (destinationId) {
-            R.id.homeFragment -> R.id.nav_home
-            R.id.vendasFragment -> R.id.nav_vendas
-            R.id.estoqueFragment -> R.id.nav_estoque
-            R.id.pedidosFragment -> R.id.nav_pedidos
-            R.id.produtosFragment -> R.id.nav_produtos
-            else -> 0 // Não seleciona nenhum se não for uma tela principal
-        }
-
+    private fun selecionarIcone(iconIdToSelect: Int) {
         if (iconIdToSelect != 0) {
             for (icon in navIcons) {
                 icon.isSelected = (icon.id == iconIdToSelect)

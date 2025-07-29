@@ -4,79 +4,118 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import com.inghara.etacontroleapp.databinding.FragmentPedidosBinding
+import com.inghara.etacontroleapp.model.Venda
+import com.inghara.etacontroleapp.viewmodel.EstoqueViewModel
 import com.inghara.etacontroleapp.viewmodel.PedidoAtualViewModel
 import com.inghara.etacontroleapp.viewmodel.VendasViewModel
 import java.util.Locale
 
+class PedidosFragment : Fragment(), ProdutoPedidoAdapter.OnItemRemoveListener {
 
+    private var _binding: FragmentPedidosBinding? = null
+    private val binding get() = _binding!!
 
-class PedidosFragment : Fragment() {
-
-    private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: ProdutoPedidoAdapter
-    private lateinit var tvTotal: TextView
 
     private val pedidoAtualViewModel: PedidoAtualViewModel by activityViewModels()
     private val vendasViewModel: VendasViewModel by activityViewModels()
+    private val estoqueViewModel: EstoqueViewModel by activityViewModels()
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_pedidos, container, false)
+    private val args: PedidosFragmentArgs by navArgs()
+    private var vendaOriginal: Venda? = null
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        _binding = FragmentPedidosBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        tvTotal = view.findViewById(R.id.tvTotalPedido)
-        recyclerView = view.findViewById(R.id.recyclerViewProdutos)
-        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        val vendaIdParaEditar = args.vendaId
+        setupRecyclerView()
 
-        adapter = ProdutoPedidoAdapter(mutableListOf()) { produto ->
-            pedidoAtualViewModel.removeProdutoDoPedido(produto)
-        }
-        recyclerView.adapter = adapter
-
-        pedidoAtualViewModel.produtosNoPedido.observe(viewLifecycleOwner) { listaDeProdutos ->
-            adapter.atualizarLista(listaDeProdutos) // Atualiza o adapter com a nova lista
-        }
-
-        pedidoAtualViewModel.totalDoPedido.observe(viewLifecycleOwner) { total ->
-            tvTotal.text = String.format(Locale.getDefault(), "Total: R$ %.2f", total)
+        if (vendaIdParaEditar == null) {
+            pedidoAtualViewModel.limparPedido()
+            setupParaNovoPedido()
+        } else {
+            // A lógica de edição continua a mesma
+            vendasViewModel.listaVendas.value?.find { it.id == vendaIdParaEditar }?.let {
+                vendaOriginal = it.copy()
+                pedidoAtualViewModel.carregarVendaParaEdicao(it)
+                setupParaEdicao(it)
+            }
         }
 
-        val btnAddProduto = view.findViewById<Button>(R.id.bttnAdd)
-        btnAddProduto.setOnClickListener {
-            // Navega para a tela de seleção de produtos usando a ação que você criou no nav_graph
+        setupObservers()
+        setupListeners()
+    }
+
+    private fun setupRecyclerView() {
+        adapter = ProdutoPedidoAdapter(this)
+        binding.recyclerViewProdutos.adapter = adapter
+        binding.recyclerViewProdutos.layoutManager = LinearLayoutManager(context)
+    }
+
+    override fun onRemoveClicked(produto: Produto) {
+        pedidoAtualViewModel.removeProdutoDoPedido(produto)
+    }
+
+    private fun setupListeners() {
+        binding.bttnAdd.setOnClickListener {
             findNavController().navigate(R.id.action_pedidosFragment_to_selecaoProdutoFragment)
         }
 
-        val btnSalvar = view.findViewById<Button>(R.id.btnSalvarPedido)
-        val clienteInput = view.findViewById<EditText>(R.id.editTextCliente)
+        binding.btnSalvarPedido.setOnClickListener {
+            val cliente = binding.editTextCliente.text.toString().trim()
+            val total = binding.tvTotalPedido.text.toString()
+            val itensNovos = pedidoAtualViewModel.produtosNoPedido.value
 
-        btnSalvar.setOnClickListener {
-            val cliente = clienteInput.text.toString().trim()
-            val totalFormatado = tvTotal.text.toString()
-
-            if (cliente.isNotBlank() && pedidoAtualViewModel.produtosNoPedido.value?.isNotEmpty() == true) {
-                vendasViewModel.adicionarVenda(cliente, totalFormatado)
-                Toast.makeText(context, "Pedido salvo com sucesso!", Toast.LENGTH_SHORT).show()
-
-                clienteInput.text.clear()
-                pedidoAtualViewModel.limparPedido()
+            if (cliente.isNotBlank() && !itensNovos.isNullOrEmpty()) {
+                if (vendaOriginal == null) {
+                    vendasViewModel.adicionarVenda(cliente, total, itensNovos)
+                    estoqueViewModel.consumirItensDeVenda(itensNovos)
+                    Toast.makeText(context, "Pedido salvo!", Toast.LENGTH_SHORT).show()
+                } else {
+                    estoqueViewModel.ajustarEstoqueAposEdicao(vendaOriginal!!.itens, itensNovos)
+                    vendasViewModel.atualizarVenda(vendaOriginal!!.id!!, cliente, total, itensNovos)
+                    Toast.makeText(context, "Pedido atualizado!", Toast.LENGTH_SHORT).show()
+                }
+                findNavController().popBackStack()
             } else {
-                Toast.makeText(context, "Adicione um cliente e produtos ao pedido.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Cliente e itens são obrigatórios.", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    private fun setupParaNovoPedido() {
+        binding.btnSalvarPedido.text = "Salvar Pedido"
+    }
+
+    private fun setupParaEdicao(venda: Venda) {
+        binding.btnSalvarPedido.text = "Atualizar Pedido"
+        binding.editTextCliente.setText(venda.cliente)
+    }
+
+    private fun setupObservers() {
+        pedidoAtualViewModel.produtosNoPedido.observe(viewLifecycleOwner) { lista ->
+            adapter.atualizarLista(lista.toMutableList())
+        }
+        pedidoAtualViewModel.totalDoPedido.observe(viewLifecycleOwner) { total ->
+            binding.tvTotalPedido.text = String.format(Locale.getDefault(), "Total: R$ %.2f", total)
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        pedidoAtualViewModel.limparPedido()
+        _binding = null
     }
 }

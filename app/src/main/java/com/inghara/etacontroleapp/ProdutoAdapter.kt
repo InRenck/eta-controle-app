@@ -1,22 +1,24 @@
-package com.inghara.etacontroleapp // Garanta que o pacote está correto
+package com.inghara.etacontroleapp
 
-import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.Filter
+import android.widget.Filterable
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import java.util.Locale
 
 class ProdutoAdapter(
-    // 1. Mude de 'val' para 'var' para permitir que a lista seja atualizada
-    private var listaProdutos: List<Produto>,
     private val onEditarClick: (Produto) -> Unit,
     private val onDeletarClick: (Produto) -> Unit
-) : RecyclerView.Adapter<ProdutoAdapter.ProdutoViewHolder>() {
+) : RecyclerView.Adapter<ProdutoAdapter.ProdutoViewHolder>(), Filterable {
 
-    // ... (seu ViewHolder e onCreateViewHolder continuam iguais)
+    private var listaProdutosCompleta: List<Produto> = ArrayList()
+    private var listaProdutosFiltrada: List<Produto> = ArrayList()
+
     inner class ProdutoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val nomeText: TextView = itemView.findViewById(R.id.tvNomeProduto)
         val precoText: TextView = itemView.findViewById(R.id.tvPreco)
@@ -31,14 +33,12 @@ class ProdutoAdapter(
         return ProdutoViewHolder(itemView)
     }
 
-    // ... (seu onBindViewHolder continua igual)
     override fun onBindViewHolder(holder: ProdutoViewHolder, position: Int) {
-        val produto = listaProdutos[position]
+        val produto = listaProdutosFiltrada[position]
         holder.nomeText.text = produto.nome
         holder.precoText.text = "Total: R$%.2f".format(produto.preco)
         holder.statusText.text = "Status: ${produto.status}"
 
-        // Lógica de cores para o status
         val context = holder.itemView.context
         val corDoStatus = when (produto.status) {
             "Ativo" -> ContextCompat.getColor(context, R.color.status_concluido)
@@ -51,11 +51,35 @@ class ProdutoAdapter(
         holder.btnDeletar.setOnClickListener { onDeletarClick(produto) }
     }
 
-    override fun getItemCount(): Int = listaProdutos.size
+    override fun getItemCount(): Int = listaProdutosFiltrada.size
 
-    @SuppressLint("NotifyDataSetChanged")
-    fun atualizarLista(novaLista: List<Produto>) {
-        listaProdutos = novaLista
-        notifyDataSetChanged() // Avisa o RecyclerView para se redesenhar com os novos dados
+    fun submitList(novaLista: List<Produto>) {
+        listaProdutosCompleta = novaLista
+        listaProdutosFiltrada = novaLista
+        notifyDataSetChanged()
+    }
+
+    override fun getFilter(): Filter {
+        return object : Filter() {
+            override fun performFiltering(constraint: CharSequence?): FilterResults {
+                val textoBusca = constraint.toString().lowercase(Locale.getDefault()).trim()
+                val resultadoFiltro = if (textoBusca.isEmpty()) {
+                    listaProdutosCompleta
+                } else {
+                    listaProdutosCompleta.filter { produto ->
+                        produto.nome.lowercase(Locale.getDefault()).contains(textoBusca)
+                    }
+                }
+                val filterResults = FilterResults()
+                filterResults.values = resultadoFiltro
+                return filterResults
+            }
+
+            @Suppress("UNCHECKED_CAST")
+            override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
+                listaProdutosFiltrada = results?.values as? List<Produto> ?: emptyList()
+                notifyDataSetChanged()
+            }
+        }
     }
 }

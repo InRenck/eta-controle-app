@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="login">
+        <item name="android:textSize">18sp</item>
+        <item name="android:letterSpacing">0.01</item>
+        <item name="android:textColor">#F8F8FF</item>
+    </style>
+
+    <style name="BottomNavIcon">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
+        <item name="android:tint">@color/bottom_nav_color</item>
+    </style>
+</resources>

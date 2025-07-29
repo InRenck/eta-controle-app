@@ -1,8 +1,13 @@
-package com.inghara.etacontroleapp.viewmodel // Ou o pacote que você escolheu
+package com.inghara.etacontroleapp.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import com.inghara.etacontroleapp.Produto
 import com.inghara.etacontroleapp.model.Venda
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -10,48 +15,63 @@ import java.util.Locale
 
 class VendasViewModel : ViewModel() {
 
-    private val _listaVendas = MutableLiveData<MutableList<Venda>>()
+    private val _listaVendas = MutableLiveData<List<Venda>>()
+    val listaVendas: LiveData<List<Venda>> = _listaVendas
 
-    val listaVendas: LiveData<MutableList<Venda>> = _listaVendas
+    private val _pedidosPendentes = MutableLiveData<List<Venda>>()
+    val pedidosPendentes: LiveData<List<Venda>> = _pedidosPendentes
+
+    private val db = Firebase.firestore
+    private val vendasCollection = db.collection("vendas")
 
     init {
-        _listaVendas.value = mutableListOf(
-            Venda("1", "Renan", "22/06/2025", "10:30", "R$ 55,00", "Concluída"),
-            Venda("2", "Maria", "22/06/2025", "11:15", "R$ 32,50", "Pendente"),
-            Venda("3", "José", "21/06/2025", "19:45", "R$ 88,00", "Cancelada")
-        )
+        vendasCollection.orderBy("timestamp", Query.Direction.DESCENDING)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    Log.w("Firestore", "Error listening for sales", error)
+                    return@addSnapshotListener
+                }
+
+                snapshot?.let {
+                    val vendas = it.toObjects(Venda::class.java)
+                    _listaVendas.value = vendas
+                    filtrarPedidosPendentes(vendas)
+                }
+            }
     }
 
-    fun adicionarVenda(cliente: String, total: String) {
-        val listaAtual = _listaVendas.value ?: mutableListOf()
+    private fun filtrarPedidosPendentes(vendas: List<Venda>) {
+        val pendentes = vendas.filter { it.status == "Pendente" }
+        _pedidosPendentes.value = pendentes
+    }
 
-        val novoId = (listaAtual.size + 1).toString()
+    fun adicionarVenda(cliente: String, total: String, itensVendidos: List<Produto>) {
         val dataFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
         val horaFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
         val dataAtual = Date()
 
-        val novaVenda = Venda(
-            id = novoId,
-            cliente = cliente,
-            data = dataFormat.format(dataAtual),
-            hora = horaFormat.format(dataAtual),
-            total = total,
-            status = "Pendente"
+        val novaVenda = hashMapOf(
+            "cliente" to cliente,
+            "data" to dataFormat.format(dataAtual),
+            "hora" to horaFormat.format(dataAtual),
+            "total" to total,
+            "status" to "Pendente",
+            "itens" to itensVendidos,
+            "timestamp" to com.google.firebase.Timestamp(dataAtual)
         )
+        vendasCollection.add(novaVenda)
+    }
 
-        listaAtual.add(0, novaVenda)
-        _listaVendas.value = listaAtual
+    fun atualizarVenda(vendaId: String, cliente: String, total: String, itens: List<Produto>) {
+        val vendaAtualizada = mapOf(
+            "cliente" to cliente,
+            "total" to total,
+            "itens" to itens
+        )
+        vendasCollection.document(vendaId).update(vendaAtualizada)
     }
 
     fun atualizarStatusVenda(vendaId: String, novoStatus: String) {
-        val listaAtual = _listaVendas.value ?: return
-
-        val itemParaAtualizar = listaAtual.find { it.id == vendaId }
-
-        itemParaAtualizar?.let {
-            it.status = novoStatus
-        }
-
-        _listaVendas.value = listaAtual
+        vendasCollection.document(vendaId).update("status", novoStatus)
     }
 }

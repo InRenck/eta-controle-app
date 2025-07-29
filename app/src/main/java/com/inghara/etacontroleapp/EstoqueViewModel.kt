@@ -1,60 +1,192 @@
 package com.inghara.etacontroleapp.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.inghara.etacontroleapp.EstoqueItem
+import com.inghara.etacontroleapp.PedidosFragment
+import com.inghara.etacontroleapp.Produto
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
 class EstoqueViewModel : ViewModel() {
 
-    private val _listaEstoque = MutableLiveData<MutableList<EstoqueItem>>()
-    val listaEstoque: LiveData<MutableList<EstoqueItem>> = _listaEstoque
+    private val _listaEstoque = MutableLiveData<List<EstoqueItem>>()
+    val listaEstoque: LiveData<List<EstoqueItem>> = _listaEstoque
+
+    private val db = Firebase.firestore
+    private val estoqueCollection = db.collection("estoque")
 
     init {
-        _listaEstoque.value = mutableListOf(
-            EstoqueItem(nome = "Hambúrguer de Picanha", estoque = 15, dataAtualizacao = "19/06/2025", valor = 25.0),
-            EstoqueItem(nome = "Refrigerante", estoque = 8, dataAtualizacao = "18/06/2025", valor = 5.0),
-            EstoqueItem(nome = "Batata Frita", estoque = 0, dataAtualizacao = "17/06/2025", valor = 12.0),
-            EstoqueItem(nome = "Água Mineral", estoque = 50, dataAtualizacao = "20/06/2025", valor = 3.0)
-        )
+        estoqueCollection.addSnapshotListener { snapshot, error ->
+            if (error != null) {
+                Log.w("Firestore", "Error listening for stock items", error)
+                return@addSnapshotListener
+            }
+            snapshot?.let {
+                _listaEstoque.value = it.toObjects(EstoqueItem::class.java)
+            }
+        }
     }
-
-    fun adicionarItem(nome: String, quantidade: Int, valor: Double) {
-        val listaAtual = _listaEstoque.value ?: mutableListOf()
-        val novoItem = EstoqueItem(
-            nome = nome,
-            estoque = quantidade,
-            valor = valor,
-            dataAtualizacao = getDataAtualFormatada()
-        )
-        listaAtual.add(0, novoItem)
-        _listaEstoque.value = listaAtual
-    }
-
 
     private fun getDataAtualFormatada(): String {
         val dataFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
         return dataFormat.format(Date())
     }
 
-    private fun notificarAtualizacao() {
-        _listaEstoque.value = _listaEstoque.value
+    fun adicionarItem(nome: String, quantidade: Int, valor: Double) {
+        val novoItem = EstoqueItem(
+            nome = nome,
+            estoque = quantidade,
+            valor = valor,
+            dataAtualizacao = getDataAtualFormatada()
+        )
+        estoqueCollection.add(novoItem)
     }
 
-    fun incrementarEstoque(item: EstoqueItem) {
-        item.estoque++
-        item.dataAtualizacao = getDataAtualFormatada()
-        notificarAtualizacao()
+    fun atualizarItem(id: String, nome: String, quantidade: Int, valor: Double) {
+        val itemAtualizado = mapOf(
+            "nome" to nome,
+            "estoque" to quantidade,
+            "valor" to valor,
+            "dataAtualizacao" to getDataAtualFormatada()
+        )
+        estoqueCollection.document(id).set(itemAtualizado)
+    }
+
+    fun deletarItem(item: EstoqueItem) {
+        item.id?.let { estoqueCollection.document(it).delete() }
     }
 
     fun decrementarEstoque(item: EstoqueItem) {
-        if (item.estoque > 0) {
-            item.estoque--
-            item.dataAtualizacao = getDataAtualFormatada()
-            notificarAtualizacao()
+        item.id?.let {
+            if ((item.estoque ?: 0) > 0) {
+                estoqueCollection.document(it).update("estoque", FieldValue.increment(-1))
+            }
         }
     }
+
+    fun consumirItensDeVenda(produtosVendidos: List<Produto>) {
+        val contagemDeProdutos = produtosVendidos.groupingBy { it }.eachCount()
+
+        contagemDeProdutos.forEach { (produto, quantidadeTotalVendida) ->
+            if (produto.ingredientes.isNotEmpty()) {
+                produto.ingredientes.forEach { ingrediente ->
+                    val quantidadeBaixar = ingrediente.quantidadeUsada * quantidadeTotalVendida
+                    darBaixaEstoquePorId(ingrediente.estoqueItemId, quantidadeBaixar)
+                }
+            } else {
+                darBaixaEstoquePorNome(produto.nome, quantidadeTotalVendida)
+            }
+        }
+    }
+
+    fun ajustarEstoqueAposEdicao(itensOriginais: List<Produto>, itensNovos: List<Produto>) {
+        val contagemOriginal = itensOriginais.groupingBy { it }.eachCount()
+        val contagemNova = itensNovos.groupingBy { it }.eachCount()
+        val todosOsProdutos = (contagemOriginal.keys + contagemNova.keys).distinct()
+
+        todosOsProdutos.forEach { produto ->
+            val qtdOriginal = contagemOriginal[produto] ?: 0
+            val qtdNova = contagemNova[produto] ?: 0
+            val diferenca = qtdNova - qtdOriginal
+
+            if (diferenca > 0) {
+                consumirItensDeVenda(List(diferenca) { produto })
+            } else if (diferenca < 0) {
+                val quantidadeADevolver = -diferenca
+                devolverItensAoEstoque(List(quantidadeADevolver) { produto })
+            }
+        }
+    }
+
+    private fun devolverItensAoEstoque(produtosDevolvidos: List<Produto>) {
+        val contagemDeProdutos = produtosDevolvidos.groupingBy { it }.eachCount()
+
+        contagemDeProdutos.forEach { (produto, quantidadeTotalDevolvida) ->
+            if (produto.ingredientes.isNotEmpty()) {
+                produto.ingredientes.forEach { ingrediente ->
+                    val quantidadeDevolver = ingrediente.quantidadeUsada * quantidadeTotalDevolvida
+                    adicionarQuantidadePorId(ingrediente.estoqueItemId, quantidadeDevolver)
+                }
+            } else {
+                adicionarQuantidadePorNome(produto.nome, quantidadeTotalDevolvida)
+            }
+        }
+    }
+
+    fun adicionarQuantidade(item: EstoqueItem, quantidade: Int) {
+        if (quantidade > 0) {
+            item.id?.let {
+                estoqueCollection.document(it).update("estoque", FieldValue.increment(quantidade.toLong()))
+            }
+        }
+    }
+
+    fun adicionarQuantidadeNome(nomeProduto: String, quantidade: Int) {
+        if (quantidade > 0) {
+            estoqueCollection.whereEqualTo("nome", nomeProduto).limit(1).get()
+                .addOnSuccessListener { documents ->
+                    if (!documents.isEmpty) {
+                        val documentId = documents.first().id
+                        estoqueCollection.document(documentId).update("estoque", FieldValue.increment(quantidade.toLong()))
+                    }
+                }
+        }
+    }
+
+    fun darBaixaEstoque(nomeProduto: String, quantidadeVendida: Int) {
+        estoqueCollection.whereEqualTo("nome", nomeProduto).limit(1).get()
+            .addOnSuccessListener { documents ->
+                if (!documents.isEmpty) {
+                    val documentId = documents.first().id
+                    val itemAtual = documents.first().toObject(EstoqueItem::class.java)
+
+                    val novaQuantidade = (itemAtual.estoque - quantidadeVendida).coerceAtLeast(0)
+
+                    estoqueCollection.document(documentId).update("estoque", novaQuantidade)
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.w("Firestore", "Error giving stock out", e)
+            }
+    }
+
+    private fun darBaixaEstoquePorNome(nomeProduto: String, quantidade: Int) {
+        if (quantidade <= 0) return
+        estoqueCollection.whereEqualTo("nome", nomeProduto).limit(1).get()
+            .addOnSuccessListener { documents ->
+                if (!documents.isEmpty) {
+                    val docId = documents.first().id
+                    estoqueCollection.document(docId).update("estoque", FieldValue.increment(-quantidade.toLong()))
+                }
+            }
+    }
+
+    private fun darBaixaEstoquePorId(itemId: String, quantidade: Double) {
+        if (quantidade <= 0) return
+        estoqueCollection.document(itemId).update("estoque", FieldValue.increment(-quantidade))
+    }
+
+    private fun adicionarQuantidadePorNome(nomeProduto: String, quantidade: Int) {
+        if (quantidade <= 0) return
+        estoqueCollection.whereEqualTo("nome", nomeProduto).limit(1).get()
+            .addOnSuccessListener { documents ->
+                if (!documents.isEmpty) {
+                    val docId = documents.first().id
+                    estoqueCollection.document(docId).update("estoque", FieldValue.increment(quantidade.toLong()))
+                }
+            }
+    }
+
+    private fun adicionarQuantidadePorId(itemId: String, quantidade: Double) {
+        if (quantidade <= 0) return
+        estoqueCollection.document(itemId).update("estoque", FieldValue.increment(quantidade))
+    }
+
 }

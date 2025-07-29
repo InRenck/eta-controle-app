@@ -4,23 +4,31 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Filter
+import android.widget.Filterable
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import java.util.Locale
+
 
 class EstoqueAdapter(
-    var itemList: MutableList<EstoqueItem>,
     private val listener: OnItemClickListener
-) : RecyclerView.Adapter<EstoqueAdapter.EstoqueViewHolder>() {
+) : RecyclerView.Adapter<EstoqueAdapter.EstoqueViewHolder>(), Filterable {
 
-    // A interface agora espera o objeto inteiro, não a posição
+    private var listaCompleta: List<EstoqueItem> = ArrayList()
+    private var listaExibida: List<EstoqueItem> = ArrayList()
+
     interface OnItemClickListener {
         fun onAdicionarClick(item: EstoqueItem)
         fun onRemoverClick(item: EstoqueItem)
+        fun onItemClick(item: EstoqueItem)
+        fun onExcluirClick(item: EstoqueItem)
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun atualizarLista(novaLista: List<EstoqueItem>) {
-        itemList = novaLista.toMutableList()
+    fun submitList(novaLista: List<EstoqueItem>) {
+        listaCompleta = novaLista
+        listaExibida = novaLista
         notifyDataSetChanged()
     }
 
@@ -30,6 +38,7 @@ class EstoqueAdapter(
         val quantity: TextView = itemView.findViewById(R.id.tvProductQuantity)
         val addButton: TextView = itemView.findViewById(R.id.tvAdd)
         val removeButton: TextView = itemView.findViewById(R.id.tvRemove)
+        val deleteButton: TextView = itemView.findViewById(R.id.tvDelete)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EstoqueViewHolder {
@@ -38,9 +47,10 @@ class EstoqueAdapter(
     }
 
     override fun onBindViewHolder(holder: EstoqueViewHolder, position: Int) {
-        val item = itemList[position]
+        val item = listaExibida[position]
 
         holder.name.text = item.nome
+        holder.price.text = "R$ %.2f".format(item.valor) // Exibindo o valor
 
         val statusTexto = when (item.statusCalculado) {
             StatusEstoque.EM_ESTOQUE -> "Em Estoque"
@@ -48,12 +58,36 @@ class EstoqueAdapter(
             StatusEstoque.FALTANDO -> "Faltando"
         }
         holder.quantity.text = "Estoque: ${item.estoque} | Status: $statusTexto"
-        holder.price.text = ""
 
-        // Agora passamos o 'item' inteiro no clique
         holder.addButton.setOnClickListener { listener.onAdicionarClick(item) }
         holder.removeButton.setOnClickListener { listener.onRemoverClick(item) }
+        holder.itemView.setOnClickListener { listener.onItemClick(item)}
+        holder.deleteButton.setOnClickListener { listener.onExcluirClick(item) }
     }
 
-    override fun getItemCount() = itemList.size
+    override fun getItemCount() = listaExibida.size
+
+    override fun getFilter(): Filter {
+        return object : Filter() {
+            override fun performFiltering(constraint: CharSequence?): FilterResults {
+                val textoBusca = constraint.toString().lowercase(Locale.getDefault()).trim()
+                val resultadoFiltro = if (textoBusca.isEmpty()) {
+                    listaCompleta
+                } else {
+                    listaCompleta.filter { item ->
+                        item.nome.lowercase(Locale.getDefault()).contains(textoBusca)
+                    }
+                }
+                val filterResults = FilterResults()
+                filterResults.values = resultadoFiltro
+                return filterResults
+            }
+
+            @Suppress("UNCHECKED_CAST")
+            override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
+                listaExibida = results?.values as? List<EstoqueItem> ?: emptyList()
+                notifyDataSetChanged()
+            }
+        }
+    }
 }
