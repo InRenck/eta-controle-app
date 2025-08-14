@@ -30,9 +30,15 @@ Este projeto ainda está em fase de desenvolvimento. Novas funcionalidades estã
 ## 📁 Estrutura
 
 app/
-├── activities/ # Splash, Login e Signup
-├── fragments/ # Vendas, Estoque, Produtos, Pedidos
+
+├── activities/ # Splash, Login e Signup 
+
+├── fragments/ # Vendas, Estoque, Produtos, Pedidos 
+
 ├── adapters/ # Adapters de RecyclerView
+
 ├── models/ # Classe Produto e outros modelos
+
 ├── res/layout/ # Arquivos XML dos layouts
+
 └── MainActivity.kt # Atividade principal com Bottom Navigation
