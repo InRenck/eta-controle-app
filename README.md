@@ -41,4 +41,46 @@ app/
 
 ├── res/layout/ # Arquivos XML dos layouts
 
-└── MainActivity.kt # Atividade principal com Bottom Navigation
+└── MainActivity.kt/ # Atividade principal com Bottom Navigation
+----
+ENGLISH 
+# ETA Control App
+
+An Android application for managing orders, products, and inventory, developed in Android Studio with Kotlin.
+
+## 📱 Features
+- 📦 Create and view products.
+- 🧾 Create and manage customer orders.
+- 🗃  Keep track of product stock.
+- 🔍 A search bar is included in all main sections.
+- 📊 Seamless navigation between Sales, Inventory, Products, and Orders tabs.
+- 👥 Login and user registration screens.
+
+## 🎨 Design
+The user interface was based on a prototype designed in [Figma](https://www.figma.com/design/pBqK17c25i306JBwwFXJR0/Untitled?node-id=0-1&m=dev).
+
+## 🛠 Tech Stack
+- Kotlin
+- Android XML Layout
+- RecyclerView
+- CardView
+- Fragments e Bottom Navigation
+
+## 🚧 In Development
+This project is currently under development. New features are being added continuously.
+
+## 📁 Project Structure
+app/
+
+├── activities/ # Splash, Login, and Signup
+
+├── fragments/ # Sales, Inventory, Products, Orders
+
+├── adapters/ # RecyclerView Adapters
+
+├── models/ # Product class and other data models
+
+├── res/layout/ # XML Layout files
+
+└── MainActivity.kt # Main activity hosting the Bottom Navigation
+
