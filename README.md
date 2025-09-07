@@ -41,7 +41,9 @@ app/
 
 ├── res/layout/ # Arquivos XML dos layouts
 
-└── MainActivity.kt/ # Atividade principal com Bottom Navigation
+
+└── MainActivity.kt # Atividade principal com Bottom Navigation
+
 ----
 ENGLISH 
 # ETA Control App
