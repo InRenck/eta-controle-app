@@ -17,7 +17,7 @@ import com.inghara.etacontroleapp.viewmodel.PedidoAtualViewModel
 import com.inghara.etacontroleapp.viewmodel.VendasViewModel
 import java.util.Locale
 
-class PedidosFragment : Fragment(), ProdutoPedidoAdapter.OnItemRemoveListener {
+class PedidosFragment : Fragment() {
 
     private var _binding: FragmentPedidosBinding? = null
     private val binding get() = _binding!!
@@ -46,7 +46,6 @@ class PedidosFragment : Fragment(), ProdutoPedidoAdapter.OnItemRemoveListener {
             pedidoAtualViewModel.limparPedido()
             setupParaNovoPedido()
         } else {
-            // A lógica de edição continua a mesma
             vendasViewModel.listaVendas.value?.find { it.id == vendaIdParaEditar }?.let {
                 vendaOriginal = it.copy()
                 pedidoAtualViewModel.carregarVendaParaEdicao(it)
@@ -59,13 +58,11 @@ class PedidosFragment : Fragment(), ProdutoPedidoAdapter.OnItemRemoveListener {
     }
 
     private fun setupRecyclerView() {
-        adapter = ProdutoPedidoAdapter(this)
+        adapter = ProdutoPedidoAdapter(mutableListOf()) { produto ->
+            pedidoAtualViewModel.removeProdutoDoPedido(produto)
+        }
         binding.recyclerViewProdutos.adapter = adapter
         binding.recyclerViewProdutos.layoutManager = LinearLayoutManager(context)
-    }
-
-    override fun onRemoveClicked(produto: Produto) {
-        pedidoAtualViewModel.removeProdutoDoPedido(produto)
     }
 
     private fun setupListeners() {

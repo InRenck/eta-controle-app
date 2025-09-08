@@ -10,13 +10,13 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import java.util.Locale
 
-
 class EstoqueAdapter(
     private val listener: OnItemClickListener
 ) : RecyclerView.Adapter<EstoqueAdapter.EstoqueViewHolder>(), Filterable {
 
     private var listaCompleta: List<EstoqueItem> = ArrayList()
     private var listaExibida: List<EstoqueItem> = ArrayList()
+    private var isAdminMode: Boolean = false
 
     interface OnItemClickListener {
         fun onAdicionarClick(item: EstoqueItem)
@@ -29,6 +29,12 @@ class EstoqueAdapter(
     fun submitList(novaLista: List<EstoqueItem>) {
         listaCompleta = novaLista
         listaExibida = novaLista
+        notifyDataSetChanged()
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun setAdminMode(isAdmin: Boolean) {
+        isAdminMode = isAdmin
         notifyDataSetChanged()
     }
 
@@ -50,7 +56,7 @@ class EstoqueAdapter(
         val item = listaExibida[position]
 
         holder.name.text = item.nome
-        holder.price.text = "R$ %.2f".format(item.valor) // Exibindo o valor
+        holder.price.text = "R$ %.2f".format(item.valor)
 
         val statusTexto = when (item.statusCalculado) {
             StatusEstoque.EM_ESTOQUE -> "Em Estoque"
@@ -58,6 +64,11 @@ class EstoqueAdapter(
             StatusEstoque.FALTANDO -> "Faltando"
         }
         holder.quantity.text = "Estoque: ${item.estoque} | Status: $statusTexto"
+
+        val visibility = if (isAdminMode) View.VISIBLE else View.GONE
+        holder.addButton.visibility = visibility
+        holder.removeButton.visibility = visibility
+        holder.deleteButton.visibility = visibility
 
         holder.addButton.setOnClickListener { listener.onAdicionarClick(item) }
         holder.removeButton.setOnClickListener { listener.onRemoverClick(item) }

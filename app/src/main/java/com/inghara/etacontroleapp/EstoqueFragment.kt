@@ -5,10 +5,12 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.InputType
 import android.text.TextWatcher
+import android.util.Log // <-- IMPORTAÇÃO ADICIONADA AQUI
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -17,6 +19,9 @@ import com.inghara.etacontroleapp.databinding.FragmentEstoqueBinding
 import com.inghara.etacontroleapp.viewmodel.EstoqueViewModel
 import java.util.Locale
 import androidx.core.os.bundleOf
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
 class EstoqueFragment : Fragment(), EstoqueAdapter.OnItemClickListener {
 
@@ -26,6 +31,8 @@ class EstoqueFragment : Fragment(), EstoqueAdapter.OnItemClickListener {
     private lateinit var adapter: EstoqueAdapter
     private val viewModel: EstoqueViewModel by activityViewModels()
 
+    private var isAdmin = false
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentEstoqueBinding.inflate(inflater, container, false)
         return binding.root
@@ -34,6 +41,7 @@ class EstoqueFragment : Fragment(), EstoqueAdapter.OnItemClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        checkUserAdminStatus()
         setupRecyclerView()
         setupListeners()
 
@@ -41,6 +49,34 @@ class EstoqueFragment : Fragment(), EstoqueAdapter.OnItemClickListener {
             aplicarFiltros(lista)
         }
     }
+
+    private fun checkUserAdminStatus() {
+        val user = FirebaseAuth.getInstance().currentUser
+        if (user != null) {
+            val db = Firebase.firestore
+            db.collection("users").document(user.uid).get()
+                .addOnSuccessListener { document ->
+                    isAdmin = document.getBoolean("isAdmin") ?: false
+                    adapter.setAdminMode(isAdmin)
+                    val visibility = if (isAdmin) View.VISIBLE else View.GONE
+                    binding.fabAddEstoque.visibility = visibility
+
+                }
+                .addOnFailureListener { e ->
+                    Log.e("EstoqueFragment", "Error getting user document", e)
+                    isAdmin = false
+                    adapter.setAdminMode(isAdmin)
+                    val visibility = if (isAdmin) View.VISIBLE else View.GONE
+                    binding.fabAddEstoque.visibility = visibility
+                }
+        } else {
+            isAdmin = false
+            adapter.setAdminMode(isAdmin)
+            val visibility = if (isAdmin) View.VISIBLE else View.GONE
+            binding.fabAddEstoque.visibility = visibility
+        }
+    }
+
 
     private fun setupRecyclerView() {
         adapter = EstoqueAdapter(this)
@@ -100,46 +136,62 @@ class EstoqueFragment : Fragment(), EstoqueAdapter.OnItemClickListener {
     }
 
     override fun onItemClick(item: EstoqueItem) {
-        val bundle = bundleOf("estoqueItemParaEditar" to item)
-        findNavController().navigate(R.id.action_estoqueFragment_to_cadastroEstoqueFragment, bundle)
+        if (isAdmin) {
+            val bundle = bundleOf("estoqueItemParaEditar" to item)
+            findNavController().navigate(R.id.action_estoqueFragment_to_cadastroEstoqueFragment, bundle)
+        } else {
+            Toast.makeText(context, "Você não tem permissão para editar o estoque.", Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun onAdicionarClick(item: EstoqueItem) {
-        val builder = AlertDialog.Builder(requireContext())
-        builder.setTitle("Adicionar ao Estoque")
-        builder.setMessage("Digite a quantidade de '${item.nome}' a ser adicionada:")
+        if (isAdmin) {
+            val builder = AlertDialog.Builder(requireContext())
+            builder.setTitle("Adicionar ao Estoque")
+            builder.setMessage("Digite a quantidade de '${item.nome}' a ser adicionada:")
 
-        val input = EditText(requireContext())
-        input.inputType = InputType.TYPE_CLASS_NUMBER
-        builder.setView(input)
+            val input = EditText(requireContext())
+            input.inputType = InputType.TYPE_CLASS_NUMBER
+            builder.setView(input)
 
-        builder.setPositiveButton("Adicionar") { dialog, _ ->
-            val quantidadeStr = input.text.toString()
-            val quantidade = quantidadeStr.toIntOrNull()
+            builder.setPositiveButton("Adicionar") { dialog, _ ->
+                val quantidadeStr = input.text.toString()
+                val quantidade = quantidadeStr.toIntOrNull()
 
-            if (quantidade != null && quantidade > 0) {
-                viewModel.adicionarQuantidade(item, quantidade)
+                if (quantidade != null && quantidade > 0) {
+                    viewModel.adicionarQuantidade(item, quantidade)
+                }
+                dialog.dismiss()
             }
-            dialog.dismiss()
-        }
-        builder.setNegativeButton("Cancelar") { dialog, _ -> dialog.cancel() }
+            builder.setNegativeButton("Cancelar") { dialog, _ -> dialog.cancel() }
 
-        builder.show()
+            builder.show()
+        } else {
+            Toast.makeText(context, "Você não tem permissão para adicionar ao estoque.", Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun onRemoverClick(item: EstoqueItem) {
-        viewModel.decrementarEstoque(item)
+        if (isAdmin) {
+            viewModel.decrementarEstoque(item)
+        } else {
+            Toast.makeText(context, "Você não tem permissão para remover do estoque.", Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun onExcluirClick(item: EstoqueItem) {
-        AlertDialog.Builder(requireContext())
-            .setTitle("Excluir Item")
-            .setMessage("Tem certeza que deseja excluir '${item.nome}' do estoque permanentemente? Esta ação não pode ser desfeita.")
-            .setPositiveButton("Sim, Excluir") { _, _ ->
-                viewModel.deletarItem(item)
-            }
-            .setNegativeButton("Não", null)
-            .show()
+        if (isAdmin) {
+            AlertDialog.Builder(requireContext())
+                .setTitle("Excluir Item")
+                .setMessage("Tem certeza que deseja excluir '${item.nome}' do estoque permanentemente? Esta ação não pode ser desfeita.")
+                .setPositiveButton("Sim, Excluir") { _, _ ->
+                    viewModel.deletarItem(item)
+                }
+                .setNegativeButton("Não", null)
+                .show()
+        } else {
+            Toast.makeText(context, "Você não tem permissão para excluir do estoque.", Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun onDestroyView() {

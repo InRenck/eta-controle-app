@@ -21,6 +21,9 @@ class VendasViewModel : ViewModel() {
     private val _pedidosPendentes = MutableLiveData<List<Venda>>()
     val pedidosPendentes: LiveData<List<Venda>> = _pedidosPendentes
 
+    private val _valorTotalVendidoDia = MutableLiveData<Double>()
+    val valorTotalVendidoDia: LiveData<Double> = _valorTotalVendidoDia
+
     private val db = Firebase.firestore
     private val vendasCollection = db.collection("vendas")
 
@@ -36,8 +39,18 @@ class VendasViewModel : ViewModel() {
                     val vendas = it.toObjects(Venda::class.java)
                     _listaVendas.value = vendas
                     filtrarPedidosPendentes(vendas)
+                    calcularVendasDoDia(vendas)
                 }
             }
+    }
+
+    private fun calcularVendasDoDia(vendas: List<Venda>) {
+        val hoje = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date())
+        val vendasDeHoje = vendas.filter { it.data == hoje && it.status == "Concluída" }
+        val total = vendasDeHoje.sumOf {
+            it.total.replace("R$", "").replace(",", ".").trim().toDoubleOrNull() ?: 0.0
+        }
+        _valorTotalVendidoDia.value = total
     }
 
     private fun filtrarPedidosPendentes(vendas: List<Venda>) {

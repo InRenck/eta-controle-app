@@ -10,6 +10,7 @@ import com.google.firebase.ktx.Firebase
 import com.inghara.etacontroleapp.EstoqueItem
 import com.inghara.etacontroleapp.PedidosFragment
 import com.inghara.etacontroleapp.Produto
+import com.inghara.etacontroleapp.StatusEstoque
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -18,6 +19,9 @@ class EstoqueViewModel : ViewModel() {
 
     private val _listaEstoque = MutableLiveData<List<EstoqueItem>>()
     val listaEstoque: LiveData<List<EstoqueItem>> = _listaEstoque
+
+    private val _itensEstoqueBaixo = MutableLiveData<Int>()
+    val itensEstoqueBaixo: LiveData<Int> = _itensEstoqueBaixo
 
     private val db = Firebase.firestore
     private val estoqueCollection = db.collection("estoque")
@@ -30,8 +34,14 @@ class EstoqueViewModel : ViewModel() {
             }
             snapshot?.let {
                 _listaEstoque.value = it.toObjects(EstoqueItem::class.java)
+                contarItensEmEstoqueBaixo(_listaEstoque.value ?: emptyList())
             }
         }
+    }
+
+    private fun contarItensEmEstoqueBaixo(lista: List<EstoqueItem>) {
+        val contagem = lista.count { it.statusCalculado == StatusEstoque.PERTO_DE_ACABAR || it.statusCalculado == StatusEstoque.FALTANDO }
+        _itensEstoqueBaixo.value = contagem
     }
 
     private fun getDataAtualFormatada(): String {
@@ -188,5 +198,4 @@ class EstoqueViewModel : ViewModel() {
         if (quantidade <= 0) return
         estoqueCollection.document(itemId).update("estoque", FieldValue.increment(quantidade))
     }
-
 }

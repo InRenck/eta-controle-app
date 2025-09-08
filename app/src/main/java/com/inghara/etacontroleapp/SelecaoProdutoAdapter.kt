@@ -1,34 +1,43 @@
 package com.inghara.etacontroleapp
 
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.inghara.etacontroleapp.viewmodel.CardapioViewModel
+import com.inghara.etacontroleapp.viewmodel.PedidoAtualViewModel
 
-class SelecaoProdutoAdapter(
-    private val listaProdutos: List<Produto>,
-    private val onProdutoClick: (Produto) -> Unit
-) : RecyclerView.Adapter<SelecaoProdutoAdapter.ViewHolder>() {
+class SelecaoProdutoFragment : Fragment() {
 
-    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val nomeProduto: TextView = view.findViewById(android.R.id.text1)
+    private val cardapioViewModel: CardapioViewModel by activityViewModels()
+    private val pedidoAtualViewModel: PedidoAtualViewModel by activityViewModels()
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(R.layout.fragment_selecao_produto, container, false)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        // Usando um layout simples do próprio Android para a lista
-        val view = LayoutInflater.from(parent.context)
-            .inflate(android.R.layout.simple_list_item_1, parent, false)
-        return ViewHolder(view)
-    }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val produto = listaProdutos[position]
-        holder.nomeProduto.text = "${produto.nome} - R$ ${"%.2f".format(produto.preco)}"
-        holder.itemView.setOnClickListener {
-            onProdutoClick(produto)
+        val recyclerView = view.findViewById<RecyclerView>(R.id.rvSelecaoProdutos)
+        recyclerView.layoutManager = LinearLayoutManager(context)
+
+        cardapioViewModel.listaDeProdutos.observe(viewLifecycleOwner) { produtosDoCardapio ->
+            recyclerView.adapter = SelecaoProdutoAdapter(produtosDoCardapio) { produtoSelecionado ->
+                // Quando um produto é clicado na lista...
+                // 1. Adiciona ao pedido atual
+                pedidoAtualViewModel.addProdutoAoPedido(produtoSelecionado)
+                // 2. Volta para a tela de Pedidos
+                findNavController().popBackStack()
+            }
         }
     }
-
-    override fun getItemCount() = listaProdutos.size
 }

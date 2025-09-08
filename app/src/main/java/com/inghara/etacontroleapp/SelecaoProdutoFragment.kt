@@ -32,10 +32,7 @@ class SelecaoProdutoFragment : Fragment() {
 
         cardapioViewModel.listaDeProdutos.observe(viewLifecycleOwner) { produtosDoCardapio ->
             recyclerView.adapter = SelecaoProdutoAdapter(produtosDoCardapio) { produtoSelecionado ->
-                // Quando um produto é clicado na lista...
-                // 1. Adiciona ao pedido atual
                 pedidoAtualViewModel.addProdutoAoPedido(produtoSelecionado)
-                // 2. Volta para a tela de Pedidos
                 findNavController().popBackStack()
             }
         }

@@ -1,5 +1,6 @@
 package com.inghara.etacontroleapp
 
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +9,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -18,8 +20,9 @@ class CadastroEstoqueFragment : Fragment() {
     private val viewModel: EstoqueViewModel by activityViewModels()
     private var itemParaEditar: EstoqueItem? = null
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        itemParaEditar = arguments?.getParcelable("estoqueItemParaEditar") // <-- MUDANÇA: Usando getParcelable
+        itemParaEditar = arguments?.getParcelable("estoqueItemParaEditar", EstoqueItem::class.java)
         return inflater.inflate(R.layout.fragment_cadastro_estoque, container, false)
     }
 

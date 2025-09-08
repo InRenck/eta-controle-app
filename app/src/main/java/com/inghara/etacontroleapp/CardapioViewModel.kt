@@ -24,7 +24,8 @@ class CardapioViewModel : ViewModel() {
                 return@addSnapshotListener
             }
             snapshot?.let {
-                _listaDeProdutos.value = it.toObjects(Produto::class.java)
+                val produtos = it.toObjects(Produto::class.java)
+                _listaDeProdutos.value = produtos
             }
         }
     }

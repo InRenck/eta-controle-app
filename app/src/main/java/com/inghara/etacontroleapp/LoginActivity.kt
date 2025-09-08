@@ -9,6 +9,9 @@ import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.FirebaseMessaging
 
 class LoginActivity : AppCompatActivity() {
 
@@ -28,12 +31,11 @@ class LoginActivity : AppCompatActivity() {
         loginBtn = findViewById(R.id.login_button)
         loginProgressBar = findViewById(R.id.login_progress_bar)
 
-
         val signupLink = findViewById<TextView>(R.id.signup_link)
         val emailInput = findViewById<EditText>(R.id.email_input)
         val passwordInput = findViewById<EditText>(R.id.password_input)
         val rememberMeCheck = findViewById<CheckBox>(R.id.remember_me)
-        val forgotPasswordLink = findViewById<TextView>(R.id.forgot_password) // NOVO
+        val forgotPasswordLink = findViewById<TextView>(R.id.forgot_password)
 
         loadPreferences(emailInput, rememberMeCheck)
 
@@ -73,6 +75,29 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+    private fun saveFCMToken() {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.w("FCM", "Fetching FCM registration token failed", task.exception)
+                return@addOnCompleteListener
+            }
+
+            val token = task.result
+            val db = Firebase.firestore
+            val user = auth.currentUser
+            user?.uid?.let { uid ->
+                val tokenMap = hashMapOf("token" to token)
+                db.collection("fcmTokens").document(uid).set(tokenMap)
+                    .addOnSuccessListener {
+                        Log.d("FCM", "Token salvo para o usuário $uid")
+                    }
+                    .addOnFailureListener { e ->
+                        Log.w("FCM", "Erro ao salvar o token", e)
+                    }
+            }
+        }
+    }
+
     private fun signInUser(email: String, password: String, rememberMe: Boolean) {
         showLoading(true)
 
@@ -85,6 +110,7 @@ class LoginActivity : AppCompatActivity() {
                     Toast.makeText(baseContext, "Login bem-sucedido!", Toast.LENGTH_SHORT).show()
 
                     savePreferences(email, password, rememberMe)
+                    saveFCMToken()
 
                     val intent = Intent(this, MainActivity::class.java)
                     startActivity(intent)
